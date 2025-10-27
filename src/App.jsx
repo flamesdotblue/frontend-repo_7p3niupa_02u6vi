@@ -1,28 +1,37 @@
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import Header from './components/Header';
+import Hero from './components/Hero';
+import Footer from './components/Footer';
+import DonationModal from './components/DonationModal';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    // Inject design tokens
+    const style = document.createElement('style');
+    style.innerHTML = `:root{--bg:#F8F8F7;--ink:#111111;--muted:#6b7280;--accent:#FF7A59;--elev:0 8px 24px rgba(0,0,0,0.06);--radius-1:8px;--radius-2:16px;--radius-3:24px}`;
+    document.head.appendChild(style);
+    return () => { document.head.removeChild(style); };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Vibe Coding Platform
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Your AI-powered development environment
-        </p>
-        <div className="text-center">
-          <button
-            onClick={() => setCount(count + 1)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-          >
-            Count is {count}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] font-inter">
+      <Header onDonate={() => setOpen(true)} />
+      <Hero onDonate={() => setOpen(true)} />
 
-export default App
+      {/* Floating Donate CTA */}
+      <button
+        onClick={() => setOpen(true)}
+        className="fixed bottom-5 right-4 sm:right-6 h-12 px-6 rounded-full bg-[var(--accent)] text-white shadow-lg hover:opacity-90 active:opacity-80"
+        aria-label="Donate"
+      >
+        Donate
+      </button>
+
+      <Footer />
+
+      <DonationModal open={open} onClose={() => setOpen(false)} />
+    </div>
+  );
+}
